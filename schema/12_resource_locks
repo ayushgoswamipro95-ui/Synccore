@@ -1,0 +1,12 @@
+-- Table 12: resource_locks (Simulation Concurrency and Mutex State)
+CREATE TABLE IF NOT EXISTS resource_locks (
+    lock_id INT AUTO_INCREMENT PRIMARY KEY,
+    resource_type VARCHAR(50) NOT NULL DEFAULT 'SHOW_SEAT',
+    resource_identifier VARCHAR(50) NOT NULL, -- e.g., 'SHOW_101_SEAT_G10'
+    lock_state ENUM('FREE', 'REQUESTED', 'ACQUIRED', 'WAITING', 'RELEASED') DEFAULT 'FREE',
+    holding_process_id INT NULL,
+    waiting_process_id INT NULL,
+    lock_acquired_time TIMESTAMP NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_resource (resource_type, resource_identifier)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
