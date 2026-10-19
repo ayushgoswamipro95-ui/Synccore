@@ -1,0 +1,65 @@
+/* Metric KPI Cards & Performance Dashboard */
+.metrics-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.kpi-card {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--accent-cyan);
+}
+
+.kpi-card.purple::before { background: var(--accent-purple); }
+.kpi-card.emerald::before { background: var(--accent-emerald); }
+.kpi-card.amber::before { background: var(--accent-amber); }
+.kpi-card.rose::before { background: var(--accent-rose); }
+
+.kpi-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.kpi-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+}
+
+/* Status Table */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.data-table th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.data-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
