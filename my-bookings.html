@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SyncCore — My Bookings</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/ticket.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <style>
+        .bookings-tabs {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-btn.active {
+            color: var(--accent-cyan);
+            background: rgba(0, 229, 255, 0.1);
+            border: 1px solid rgba(0, 229, 255, 0.25);
+        }
+
+        .tab-count {
+            font-size: 0.75rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .tab-btn.active .tab-count {
+            background: var(--accent-cyan);
+            color: #0b0f19;
+            font-weight: 700;
+        }
+
+        .bookings-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .booking-card {
+            background: linear-gradient(135deg, rgba(16, 22, 37, 0.8), rgba(11, 15, 25, 0.9));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            display: flex;
+            gap: 1.5rem;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .booking-card:hover {
+            border-color: rgba(0, 229, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .booking-poster {
+            width: 100px;
+            min-width: 100px;
+            height: 145px;
+            border-radius: var(--radius-md);
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #182032;
+        }
+
+        .booking-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .booking-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .booking-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.25rem;
+        }
+
+        .booking-venue {
+            font-size: 0.88rem;
+            color: var(--accent-cyan);
+            font-weight: 500;
+        }
+
+        .booking-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 0.75rem;
+            margin: 1rem 0;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 0.85rem 1rem;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .b-meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .b-meta-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.15rem;
+        }
+
+        .b-meta-val {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        .booking-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .booking-btns {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .empty-bookings-box {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-lg);
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 640px) {
+            .booking-card {
+                flex-direction: column;
+            }
+            .booking-poster {
+                width: 100%;
+                height: 180px;
+            }
+            .booking-top {
+                flex-direction: column;
+            }
+            .booking-actions {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            .booking-btns {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="container nav-content">
+            <a href="../index.html" class="brand-logo">
+                <span class="brand-dot"></span>
+                <span>SyncCore Cinema</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="../index.html" class="nav-link">Home</a></li>
+                <li><a href="my-bookings.html" class="nav-link active">My Bookings</a></li>
+                <li><a href="admin.html" class="nav-link" style="color: var(--accent-rose); font-weight: 600;">🛡️ Admin</a></li>
+            </ul>
+            <div id="nav-auth-container" style="display: flex; align-items: center; gap: 1rem;">
+                <a href="simulation.html" class="btn btn-secondary btn-sm" style="border-color: var(--accent-cyan); color: var(--accent-cyan); font-weight:700;">
+                    ⚡ OS Simulator
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="padding-top: 3rem; padding-bottom: 5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 0.4rem;">My Bookings</h1>
+                <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                    Personal reservation audit trail linked to your authenticated account.
+                </p>
+            </div>
+            <div id="user-info-banner" style="display: none; align-items: center; gap: 0.75rem; background: rgba(0, 229, 255, 0.08); border: 1px solid rgba(0, 229, 255, 0.2); padding: 0.5rem 1rem; border-radius: var(--radius-md);">
+                <span style="font-size: 1.1rem;">👤</span>
+                <div style="font-size: 0.85rem;">
+                    <div style="font-weight: 700; color: #fff;" id="logged-user-name">User</div>
+                    <div style="color: var(--accent-cyan);" id="logged-user-email">email@synccore.com</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Not Logged In Notice -->
+        <div id="auth-required-view" class="glass-panel" style="display: none; text-align: center; padding: 4rem 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+            <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: #fff;">Authentication Required</h2>
+            <p style="color: var(--text-secondary); max-width: 480px; margin: 0 auto 1.75rem auto;">
+                Please sign in with your email to view your personal booking history, download tickets, or manage reservations.
+            </p>
+            <button id="btn-login-prompt" class="btn btn-primary" style="padding: 0.75rem 2rem;">
+                Sign In to View My Bookings
+            </button>
+        </div>
+
+        <!-- Bookings View Container -->
+        <div id="bookings-main-view" style="display: none;">
+            <!-- Tabs -->
+            <div class="bookings-tabs">
+                <button class="tab-btn active" data-tab="upcoming">
+                    Upcoming Bookings <span class="tab-count" id="count-upcoming">0</span>
+                </button>
+                <button class="tab-btn" data-tab="past">
+                    Past Bookings <span class="tab-count" id="count-past">0</span>
+                </button>
+                <button class="tab-btn" data-tab="cancelled">
+                    Cancelled Bookings <span class="tab-count" id="count-cancelled">0</span>
+                </button>
+            </div>
+
+            <!-- List -->
+            <div id="bookings-list" class="bookings-grid">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Dependencies -->
+    <div id="toast-container"></div>
+    <script src="../js/components/toast.js"></script>
+    <script src="../js/components/modal.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/components/navbar.js"></script>
+    <script src="../js/components/qrcode.min.js"></script>
+    <script src="../js/components/ticket.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const authView = document.getElementById('auth-required-view');
+            const mainView = document.getElementById('bookings-main-view');
+            const listEl = document.getElementById('bookings-list');
+            const promptBtn = document.getElementById('btn-login-prompt');
+            const userBanner = document.getElementById('user-info-banner');
+            const userNameEl = document.getElementById('logged-user-name');
+            const userEmailEl = document.getElementById('logged-user-email');
+
+            let allBookings = [];
+            let activeTab = 'upcoming';
+
+            promptBtn.onclick = () => {
+                if (window.openAuthModal) {
+                    window.openAuthModal('login', () => {
+                        window.location.reload();
+                    });
+                }
+            };
+
+            // Check if logged in via window.API, window.SyncCoreAuth, or localStorage
+            const currentUser = (window.API && window.API.getUser()) ||
+                                (window.SyncCoreAuth && window.SyncCoreAuth.getUser()) ||
+                                (() => {
+                                    try { return JSON.parse(localStorage.getItem('synccore_user') || 'null'); } catch(e) { return null; }
+                                })();
+
+            if (!currentUser) {
+                authView.style.display = 'block';
+                mainView.style.display = 'none';
+                return;
+            }
+
+            // User is authenticated
+            authView.style.display = 'none';
+            mainView.style.display = 'block';
+            userBanner.style.display = 'flex';
+            userNameEl.textContent = currentUser.name || currentUser.fullName || 'Customer';
+            userEmailEl.textContent = currentUser.email || '';
+
+            // Setup tabs
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            tabButtons.forEach(btn => {
+                btn.onclick = () => {
+                    tabButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    activeTab = btn.getAttribute('data-tab');
+                    renderCurrentTab();
+                };
+            });
+
+            // Fetch user's bookings from backend
+            try {
+                listEl.innerHTML = '<div style="text-align:center; padding:3rem; color:var(--text-muted);">Loading your bookings...</div>';
+                allBookings = await window.API.getMyBookings();
+            } catch (e) {
+                console.error('Failed to load bookings:', e);
+                allBookings = [];
+            }
+
+            // Categorize bookings
+            const now = new Date();
+            const categorized = {
+                upcoming: [],
+                past: [],
+                cancelled: []
+            };
+
+            (allBookings || []).forEach(b => {
+                const status = (b.bookingStatus || b.status || 'CONFIRMED').toUpperCase();
+                if (status === 'CANCELLED') {
+                    categorized.cancelled.push(b);
+                } else {
+                    // Check date & time
+                    const dStr = b.movieDate || b.showDate || '';
+                    const tStr = b.movieTime || b.showTime || '23:59';
+                    let showDateObj = null;
+
+                    if (dStr) {
+                        try {
+                            showDateObj = new Date(`${dStr}T${tStr}`);
+                        } catch (e) {}
+                    }
+
+                    if (showDateObj && !isNaN(showDateObj.getTime()) && showDateObj < now) {
+                        categorized.past.push(b);
+                    } else {
+                        categorized.upcoming.push(b);
+                    }
+                }
+            });
+
+            // Update tab badge counters
+            document.getElementById('count-upcoming').textContent = categorized.upcoming.length;
+            document.getElementById('count-past').textContent = categorized.past.length;
+            document.getElementById('count-cancelled').textContent = categorized.cancelled.length;
+
+            renderCurrentTab();
+
+            function renderCurrentTab() {
+                const items = categorized[activeTab] || [];
+                listEl.innerHTML = '';
+
+                if (items.length === 0) {
+                    let emptyMsg = 'No upcoming bookings found.';
+                    let subMsg = 'Ready for a movie night? Explore currently playing movies.';
+                    if (activeTab === 'past') {
+                        emptyMsg = 'No past bookings on record.';
+                        subMsg = 'Your previous cinema reservation history will show here.';
+                    } else if (activeTab === 'cancelled') {
+                        emptyMsg = 'No cancelled bookings.';
+                        subMsg = 'You have not cancelled any bookings.';
+                    }
+
+                    listEl.innerHTML = `
+                        <div class="empty-bookings-box">
+                            <div style="font-size:2.5rem; margin-bottom:0.75rem;">🎬</div>
+                            <h3 style="font-size:1.25rem; color:#fff; margin-bottom:0.35rem;">${emptyMsg}</h3>
+                            <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">${subMsg}</p>
+                            <a href="../index.html" class="btn btn-primary btn-sm">Explore Movies</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                items.forEach(b => {
+                    const card = createBookingCard(b);
+                    listEl.appendChild(card);
+                });
+            }
+
+            function createBookingCard(b) {
+                const card = document.createElement('div');
+                card.className = 'booking-card';
+
+                const bRef = b.bookingReference || ('BK-' + b.bookingId);
+                const title = b.movieTitle || 'SyncCore Screening';
+                let poster = b.posterUrl || '../assets/posters/inception.jpg';
+                if (!poster.startsWith('../') && !poster.startsWith('http') && !poster.startsWith('/')) {
+                    poster = '../' + poster;
+                }
+
+                const theatre = b.theatreName || 'SyncCore Cinemas';
+                const screen = b.screenName || 'Screen 1';
+                const date = b.movieDate || b.showDate || 'Scheduled';
+                const time = b.movieTime || b.showTime || '19:00';
+                const seats = b.seats || ('Total ' + (b.totalSeats || 1));
+                const totalSeats = b.totalSeats || (seats.includes(',') ? seats.split(',').length : 1);
+                const amount = parseFloat(b.totalAmount || 350).toFixed(2);
+                const bookingStatus = (b.bookingStatus || b.status || 'CONFIRMED').toUpperCase();
+                const paymentStatus = (b.paymentStatus || 'PAID').toUpperCase();
+                const createdAt = b.createdAt || 'Recent';
+
+                let statusBadge = `<span class="badge badge-running">${bookingStatus}</span>`;
+                if (bookingStatus === 'CANCELLED') {
+                    statusBadge = `<span class="badge badge-error" style="background:rgba(239,68,68,0.2); color:#ef4444;">CANCELLED</span>`;
+                } else if (bookingStatus === 'PENDING') {
+                    statusBadge = `<span class="badge badge-waiting">PENDING</span>`;
+                }
+
+                let payBadge = `<span class="badge" style="background:rgba(16,185,129,0.15); color:#10b981;">💳 ${paymentStatus}</span>`;
+                if (paymentStatus === 'FAILED') {
+                    payBadge = `<span class="badge" style="background:rgba(239,68,68,0.15); color:#ef4444;">FAILED</span>`;
+                }
+
+                // Action buttons
+                let buttonsHtml = '';
+                if (bookingStatus === 'CONFIRMED') {
+                    buttonsHtml += `
+                        <button class="btn btn-primary btn-sm btn-ticket-action" style="background: linear-gradient(135deg, #10b981, #059669); color:#fff;">
+                            🎟️ Download Ticket
+                        </button>
+                    `;
+                    if (activeTab === 'upcoming') {
+                        buttonsHtml += `
+                            <button class="btn btn-danger btn-sm btn-cancel-action" style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color:#fca5a5;">
+                                Cancel Booking
+                            </button>
+                        `;
+                    }
+                }
+
+                card.innerHTML = `
+                    <img src="${poster}" alt="${title}" class="booking-poster" onerror="this.src='../assets/posters/inception.jpg'">
+                    <div class="booking-content">
+                        <div class="booking-top">
+                            <div>
+                                <h3 class="booking-title">${title}</h3>
+                                <div class="booking-venue">📍 ${theatre} &bull; ${screen}</div>
+                            </div>
+                            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.35rem;">
+                                <span class="font-mono" style="font-weight:800; color:var(--accent-cyan); font-size:1rem;">${bRef}</span>
+                                <div style="display:flex; gap:0.4rem;">
+                                    ${payBadge}
+                                    ${statusBadge}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="booking-meta-grid">
+                            <div class="b-meta-item">
+                                <span class="b-meta-label">Show Date</span>
+                                <span class="b-meta-val">${date}</span>
+                            </div>
+                            <div class="b-meta-item">
+                                <span class="b-meta-label">Showtime</span>
+                                <span class="b-meta-val">${time}</span>
+                            </div>
+                            <div class="b-meta-item">
+                                <span class="b-meta-label">Seats (${totalSeats})</span>
+                                <span class="b-meta-val font-mono" style="color:var(--accent-cyan);">${seats}</span>
+                            </div>
+                            <div class="b-meta-item">
+                                <span class="b-meta-label">Total Amount</span>
+                                <span class="b-meta-val font-mono" style="color:#10b981; font-weight:800;">₹${amount}</span>
+                            </div>
+                            <div class="b-meta-item">
+                                <span class="b-meta-label">Booking Date</span>
+                                <span class="b-meta-val" style="font-size:0.8rem; color:#94a3b8;">${createdAt}</span>
+                            </div>
+                        </div>
+
+                        <div class="booking-actions">
+                            <div style="font-size:0.75rem; color:#64748b;">
+                                Booking ID: #${b.bookingId || '---'} &bull; User: ${currentUser.email}
+                            </div>
+                            <div class="booking-btns">
+                                ${buttonsHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Wire up actions
+                const ticketBtn = card.querySelector('.btn-ticket-action');
+                if (ticketBtn) {
+                    ticketBtn.onclick = () => {
+                        window.openTicket({
+                            bookingId: b.bookingId,
+                            bookingReference: bRef,
+                            movieTitle: title,
+                            posterUrl: poster,
+                            theatreName: theatre,
+                            screenName: screen,
+                            movieDate: date,
+                            movieTime: time,
+                            seats: seats,
+                            totalSeats: totalSeats,
+                            totalAmount: amount,
+                            customerName: currentUser.name || currentUser.fullName || 'Customer',
+                            customerEmail: currentUser.email || '',
+                            bookingStatus: bookingStatus,
+                            paymentStatus: paymentStatus
+                        });
+                    };
+                }
+
+                const cancelBtn = card.querySelector('.btn-cancel-action');
+                if (cancelBtn) {
+                    cancelBtn.onclick = async () => {
+                        if (!confirm(`Are you sure you want to cancel booking ${bRef}? Your seats will be released back to the auditorium inventory.`)) {
+                            return;
+                        }
+                        cancelBtn.disabled = true;
+                        cancelBtn.textContent = 'Cancelling...';
+
+                        try {
+                            const res = await window.API.cancelBooking(b.bookingId);
+                            if (res.success) {
+                                alert(`Booking ${bRef} has been cancelled successfully.`);
+                                window.location.reload();
+                            } else {
+                                alert(`Failed to cancel booking: ${res.message || 'Unknown error'}`);
+                                cancelBtn.disabled = false;
+                                cancelBtn.textContent = 'Cancel Booking';
+                            }
+                        } catch (err) {
+                            alert('Network error while cancelling booking.');
+                            cancelBtn.disabled = false;
+                            cancelBtn.textContent = 'Cancel Booking';
+                        }
+                    };
+                }
+
+                return card;
+            }
+        });
+    </script>
+</body>
+</html>

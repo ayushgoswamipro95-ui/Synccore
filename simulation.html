@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SyncCore — OS & DBMS Concurrency Simulator</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/simulation.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container nav-content">
+            <div style="display: flex; align-items: center; gap: 1.25rem;">
+                <a href="../index.html" class="brand-logo" title="Back to Home">
+                    <span class="brand-dot"></span>
+                    <span>SyncCore Cinema</span>
+                </a>
+                <span class="badge font-mono" style="background: rgba(0,229,255,0.15); color: var(--accent-cyan); border: 1px solid rgba(0,229,255,0.3); font-size: 0.75rem;">
+                    ⚡ OS Simulator Lab
+                </span>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <a href="../index.html" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 700; color: #fff; border-color: rgba(255,255,255,0.2);">
+                    🏠 Back to Home
+                </a>
+                <a href="admin.html" class="btn btn-secondary btn-sm" style="border-color: var(--accent-rose); color: var(--accent-rose); font-weight: 700;">
+                    🛡️ Admin
+                </a>
+                <span class="badge badge-ready font-mono" id="sim-status-badge">Status: READY</span>
+                <span class="font-mono" style="font-size: 0.85rem; color: var(--accent-cyan);">Clock: <strong id="sim-clock-display">0</strong> ticks</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="padding-top: 1.5rem; padding-bottom: 4rem;">
+
+        <!-- Live Simulation Narrative / Story Callout Banner -->
+        <div class="sim-narrative-banner" id="sim-narrative-box">
+            <div class="sim-narrative-icon" id="narrative-icon">🎯</div>
+            <div style="flex-grow: 1;">
+                <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-cyan); font-weight: 700; margin-bottom: 0.2rem;" id="narrative-step-title">
+                    Step 1: Select a Seat & Start Simulation
+                </div>
+                <div class="sim-narrative-text" id="narrative-main-text">
+                    Click any seat below to select the <strong>Target Contention Seat</strong>. Multiple virtual users will then race for this exact seat under your selected scheduling algorithm!
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI Metrics Header -->
+        <div class="metrics-row" style="margin-top: 1.25rem;">
+            <div class="glass-panel kpi-card">
+                <div class="kpi-label">Target Seat</div>
+                <div class="kpi-value title-gradient" id="kpi-target-seat">G10</div>
+            </div>
+            <div class="glass-panel kpi-card purple">
+                <div class="kpi-label">Active Algorithm</div>
+                <div class="kpi-value" id="kpi-algo-name" style="color: var(--accent-purple); font-size: 1.5rem;">FCFS</div>
+            </div>
+            <div class="glass-panel kpi-card emerald">
+                <div class="kpi-label">Allocated (Winner)</div>
+                <div class="kpi-value" id="kpi-committed" style="color: var(--accent-emerald);">0</div>
+            </div>
+            <div class="glass-panel kpi-card rose">
+                <div class="kpi-label">Cancelled / Rollbacks</div>
+                <div class="kpi-value" id="kpi-rollbacks" style="color: var(--accent-rose);">0</div>
+            </div>
+        </div>
+
+        <div class="sim-grid">
+            <!-- Sidebar: Parameters & Interactive Seat Picker -->
+            <div class="glass-panel sim-controls">
+                
+                <!-- Playback Controls -->
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.8rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">
+                        Simulation Controls
+                    </span>
+                    <span class="badge badge-ready font-mono" id="sim-speed-badge">1.0x Speed</span>
+                </div>
+
+                <div class="playback-bar">
+                    <button id="btn-play" class="playback-btn" title="Run / Resume Simulation">▶</button>
+                    <button id="btn-pause" class="playback-btn" title="Pause Simulation" disabled>⏸</button>
+                    <button id="btn-step" class="playback-btn" title="Step 1 Tick Forward">⏭</button>
+                    <button id="btn-reset-sim" class="playback-btn" title="Reset Simulation">🔄</button>
+                    <div style="margin-left: auto; display: flex; align-items: center; gap: 0.3rem;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Speed:</span>
+                        <select id="sim-speed-select" class="form-control" style="padding: 0.2rem 0.4rem; font-size: 0.75rem; width: 65px;">
+                            <option value="1200">0.5x</option>
+                            <option value="600" selected>1.0x</option>
+                            <option value="250">2.0x</option>
+                            <option value="80">5.0x</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Interactive Cinema Seat Selector -->
+                <div class="sim-seat-picker">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                        <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--text-secondary);">
+                            Pick Contention Seat:
+                        </span>
+                        <span class="badge badge-ready font-mono" id="selected-seat-badge" style="background: rgba(0,229,255,0.2); color: var(--accent-cyan);">Seat G10</span>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                        Click any seat to make virtual processes fight for it:
+                    </div>
+
+                    <div class="sim-seat-grid" id="sim-interactive-seat-grid">
+                        <!-- Populated by JS: A1-A6, B1-B6, C1-C6, G10-G15 -->
+                    </div>
+
+                    <div style="display: flex; justify-content: center; gap: 1rem; font-size: 0.7rem; color: var(--text-muted); margin-top: 0.5rem;">
+                        <span>⚪ Available</span>
+                        <span>🎯 Target</span>
+                        <span>🟢 Allocated</span>
+                        <span>🔴 Cancelled</span>
+                    </div>
+                </div>
+
+                <!-- Parameters -->
+                <div class="form-group">
+                    <label>Scheduling Algorithm</label>
+                    <select id="sim-algorithm" class="form-control">
+                        <option value="FCFS" selected>FCFS (First-Come, First-Served)</option>
+                        <option value="SJF">SJF (Shortest Job First)</option>
+                        <option value="PRIORITY">Priority Scheduling</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Competing Virtual Users</label>
+                    <select id="sim-process-count" class="form-control">
+                        <option value="3" selected>3 Users (Best for understanding)</option>
+                        <option value="5">5 Users (Standard)</option>
+                        <option value="8">8 Users (Stress Test)</option>
+                    </select>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 0.25rem 0;">
+
+                <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 600; color: var(--text-muted);">
+                    Interactive OS Scenarios
+                </div>
+
+                <button id="btn-race-demo" class="btn btn-secondary btn-sm" style="width: 100%; border-color: var(--accent-cyan); color: var(--accent-cyan);">
+                    ⚡ Race Condition Visualizer
+                </button>
+
+                <button id="btn-deadlock-demo" class="btn btn-secondary btn-sm" style="width: 100%; border-color: var(--accent-rose); color: var(--accent-rose);">
+                    🛑 Deadlock (Wait-For-Graph) Demo
+                </button>
+
+                <button id="btn-compare-algos" class="btn btn-secondary btn-sm" style="width: 100%; border-color: var(--accent-purple); color: var(--accent-purple);">
+                    📊 Algorithm Benchmark Comparison
+                </button>
+            </div>
+
+            <!-- Main Workstation: Monitors & Outcomes -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                
+                <!-- Winner & Cancellation Outcome Summary Podium -->
+                <div class="glass-panel" style="padding: 1.25rem;" id="outcome-summary-card">
+                    <h3 style="font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                        Seat Allocation Outcome
+                    </h3>
+                    <div class="outcome-podium">
+                        <div class="podium-box podium-winner">
+                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--accent-emerald); text-transform: uppercase;">
+                                🏆 Seat Winner (Allocated)
+                            </span>
+                            <div class="font-mono" style="font-size: 1.25rem; font-weight: 800; color: #fff;" id="podium-winner-name">
+                                None Yet
+                            </div>
+                            <span style="font-size: 0.78rem; color: var(--text-muted);" id="podium-winner-desc">
+                                Waiting for simulation to execute...
+                            </span>
+                        </div>
+
+                        <div class="podium-box podium-cancelled">
+                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--accent-rose); text-transform: uppercase;">
+                                ❌ Cancelled Bookings (Rollback)
+                            </span>
+                            <div class="font-mono" style="font-size: 1.25rem; font-weight: 800; color: #fff;" id="podium-cancelled-list">
+                                None
+                            </div>
+                            <span style="font-size: 0.78rem; color: var(--text-muted);" id="podium-cancelled-desc">
+                                All processes that arrived after the winner was allocated.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CPU Core & Active Process Execution -->
+                <div class="glass-panel cpu-core-box" id="cpu-core-visualizer">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 1.5rem;">⚙️</span>
+                            <div>
+                                <h3 style="font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-primary);">
+                                    CPU Core 0 — Scheduler Dispatcher
+                                </h3>
+                                <p style="font-size: 0.8rem; color: var(--text-muted);" id="cpu-status-text">
+                                    CPU Idle. Press "▶" to begin process dispatch.
+                                </p>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <span class="badge badge-terminated font-mono" id="cpu-load-badge">0% Load</span>
+                            <div class="font-mono" style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;" id="cpu-active-proc">
+                                Active: [IDLE]
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cpu-load-bar-wrapper">
+                        <div class="cpu-load-bar" id="cpu-load-bar"></div>
+                    </div>
+                </div>
+
+                <!-- Ready Queue Visualizer -->
+                <div class="glass-panel" style="padding: 1.25rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <h3 style="font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary);">
+                            OS Ready Queue (Ordered by Scheduling Rule)
+                        </h3>
+                        <span class="badge badge-ready font-mono" id="queue-count-badge">0 In Queue</span>
+                    </div>
+                    <div class="queue-track" id="ready-queue-track">
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">Ready queue empty. Click "▶" to begin execution.</span>
+                    </div>
+                </div>
+
+                <!-- Live Process State Monitor Table -->
+                <div class="glass-panel" style="padding: 1.25rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <h3 style="font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary);">
+                            Virtual User Process Monitor (PCB Table)
+                        </h3>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Real-Time State Tracking</span>
+                    </div>
+                    <div style="overflow-x: auto; max-height: 220px;">
+                        <table class="data-table" style="font-size: 0.8rem;">
+                            <thead>
+                                <tr>
+                                    <th>Process</th>
+                                    <th>User</th>
+                                    <th>State</th>
+                                    <th>Target Seat</th>
+                                    <th>Burst</th>
+                                    <th>Remaining</th>
+                                    <th>Arrival</th>
+                                    <th>Wait</th>
+                                    <th>Turnaround</th>
+                                    <th>Booking Outcome</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pcb-table-body">
+                                <tr>
+                                    <td colspan="10" style="text-align:center; color:var(--text-muted); padding:1.5rem;">
+                                        No active processes. Press "▶" to instantiate simulation workload.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Gantt Chart Execution -->
+                <div class="glass-panel" style="padding: 1.25rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <h3 style="font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary);">
+                            CPU Execution Timeline (Gantt Chart)
+                        </h3>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Ticks Elapsed: <span id="gantt-tick-count" class="font-mono">0</span></span>
+                    </div>
+                    <div class="gantt-chart" id="gantt-timeline">
+                        <span style="color:var(--text-muted); font-size:0.8rem; margin:auto;">Execution timeline will grow tick by tick as CPU executes.</span>
+                    </div>
+                </div>
+
+                <!-- Real-Time Event Log Terminal -->
+                <div class="glass-panel" style="padding: 1.25rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <h3 style="font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary);">
+                            Kernel & DBMS Event Log
+                        </h3>
+                        <button class="btn btn-secondary btn-sm" id="btn-clear-logs" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">Clear Log</button>
+                    </div>
+                    <div class="terminal-log" id="sim-event-log">
+                        <div class="log-entry">[SYSTEM] Kernel and Transaction Manager initialized.</div>
+                        <div class="log-entry">[SYSTEM] Simulator standing by for workload dispatch.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACID Educational Panel -->
+        <div class="glass-panel" style="margin-top: 2rem; padding: 2rem;">
+            <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">ACID Guarantees in SyncCore Simulation</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;">
+                <div>
+                    <h4 style="color: var(--accent-cyan); font-size: 1rem; margin-bottom: 0.25rem;">Atomicity</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">
+                        All booking and payment steps execute completely or rollback entirely. No orphan tickets or uncharged bookings.
+                    </p>
+                </div>
+                <div>
+                    <h4 style="color: var(--accent-purple); font-size: 1rem; margin-bottom: 0.25rem;">Consistency</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">
+                        Foreign keys, unique constraints on `uk_booking_show_seat`, and triggers preserve seat invariant states.
+                    </p>
+                </div>
+                <div>
+                    <h4 style="color: var(--accent-emerald); font-size: 1rem; margin-bottom: 0.25rem;">Isolation</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">
+                        Pessimistic row locking (`SELECT FOR UPDATE`) prevents dirty reads and double booking in high contention.
+                    </p>
+                </div>
+                <div>
+                    <h4 style="color: var(--accent-amber); font-size: 1rem; margin-bottom: 0.25rem;">Durability</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">
+                        InnoDB write-ahead redo logs guarantee committed ticket bookings persist across system crashes.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="toast-container"></div>
+    <script src="../js/components/toast.js"></script>
+    <script src="../js/components/modal.js"></script>
+    <script src="../js/components/charts.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/simulation/queue-view.js"></script>
+    <script src="../js/simulation/lock-view.js"></script>
+    <script src="../js/simulation/process-view.js"></script>
+    <script src="../js/simulation/scheduler-view.js"></script>
+    <script src="../js/simulation/race-condition.js"></script>
+    <script src="../js/simulation/deadlock.js"></script>
+    <script src="../js/simulation/performance.js"></script>
+    <script src="../js/simulation/simulation.js"></script>
+</body>
+</html>
