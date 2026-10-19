@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SyncCore Shows — Select Screening</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/booking.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container nav-content">
+            <div style="display:flex; align-items:center; gap:1.25rem;">
+                <a href="../index.html" class="brand-logo">
+                    <span class="brand-dot"></span>
+                    <span>SyncCore Cinema</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="../index.html" class="nav-link">Home</a></li>
+                <li><a href="my-bookings.html" class="nav-link">My Bookings</a></li>
+                <li><a href="admin.html" class="nav-link" style="color: var(--accent-rose); font-weight: 600;">🛡️ Admin</a></li>
+            </ul>
+            <a href="simulation.html" class="btn btn-secondary btn-sm" style="border-color: var(--accent-cyan); color: var(--accent-cyan); font-weight:700;">
+                ⚡ OS Concurrency Simulator
+            </a>
+        </div>
+    </header>
+
+    <main class="container" style="padding-top: 2.5rem; padding-bottom: 5rem;">
+        
+        <!-- Movie Details Banner -->
+        <div class="glass-panel" id="movie-summary-header" style="padding: 1.75rem; margin-bottom: 2rem; display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
+            <img id="movie-header-poster" src="../assets/images/inception.jpg" alt="Poster" style="width: 100px; height: 145px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+            <div style="flex: 1;">
+                <div style="display:flex; gap:0.5rem; margin-bottom:0.4rem; align-items:center;">
+                    <span class="badge badge-ready font-mono" id="movie-header-cert">U/A 16+</span>
+                    <span style="font-size:0.85rem; color:var(--text-muted);" id="movie-header-lang">English, Hindi</span>
+                </div>
+                <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 0.35rem;" id="movie-title-header">
+                    Movie Title
+                </h1>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;" id="movie-header-desc">
+                    Experience state-of-the-art cinema with ACID isolated seat reservation.
+                </p>
+                <div style="font-size: 0.85rem; color: var(--accent-cyan); font-family: var(--font-mono);" id="movie-header-duration">
+                    Duration: 148 mins &bull; Sci-Fi / Action
+                </div>
+            </div>
+        </div>
+
+        <!-- Available Show Dates Selection (Strictly Real Shows Only) -->
+        <div style="margin-bottom: 2rem;">
+            <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📅</span>
+                <span>Select Available Show Date:</span>
+            </h2>
+            <div class="category-pills" id="dates-pills-container" style="margin-bottom: 0; min-height: 48px;">
+                <!-- Dynamically populated date pills from backend -->
+                <span style="color:var(--text-muted); font-size:0.85rem;">Checking scheduled show dates in database...</span>
+            </div>
+        </div>
+
+        <!-- Available Screenings & Auditoriums -->
+        <div>
+            <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🎟️</span>
+                <span>Available Theatres & Auditoriums:</span>
+            </h2>
+            <div id="shows-list" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <!-- Populated dynamically based on selected date -->
+            </div>
+        </div>
+
+    </main>
+
+    <div id="toast-container"></div>
+    <script src="../js/components/toast.js"></script>
+    <script src="../js/components/modal.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/components/navbar.js"></script>
+    <script src="../js/booking/show.js"></script>
+</body>
+</html>

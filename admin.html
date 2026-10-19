@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SyncCore Cinema — Admin Control Center</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container nav-content">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <a href="../index.html" class="brand-logo">
+                    <span class="brand-dot" style="background: var(--accent-rose);"></span>
+                    <span>SyncCore Cinema</span>
+                </a>
+                <span class="badge" style="background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.3); font-size: 0.75rem;">
+                    🛡️ Admin Portal
+                </span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1.25rem;">
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="my-bookings.html" class="nav-link">My Bookings</a>
+                <a href="simulation.html" class="btn btn-secondary btn-sm" style="border-color: var(--accent-cyan); color: var(--accent-cyan);">
+                    ⚡ OS Simulator
+                </a>
+                <button id="btn-admin-logout" class="btn btn-secondary btn-sm" style="display: none; border-color: var(--accent-rose); color: var(--accent-rose);">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="padding-top: 2.5rem; padding-bottom: 5rem;">
+
+        <!-- 1. Admin Login Box (Shown when logged out) -->
+        <div id="admin-login-section" style="max-width: 440px; margin: 3rem auto;">
+            <div class="glass-panel" style="padding: 2.5rem 2rem;">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔐</div>
+                    <h1 style="font-size: 1.6rem; margin-bottom: 0.3rem;">Admin Authorization</h1>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem;">Login to manage movie catalog, screens, and database storage.</p>
+                </div>
+
+                <form id="admin-login-form" autocomplete="off">
+                    <div class="form-group" style="margin-bottom: 1.2rem;">
+                        <label style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: block;">Username</label>
+                        <input type="text" id="admin-user-input" class="form-control" placeholder="Enter admin username" required autocomplete="off" style="width: 100%;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: block;">Password</label>
+                        <input type="password" id="admin-pass-input" class="form-control" placeholder="Enter admin password" required autocomplete="current-password" style="width: 100%;">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; font-weight: 700;">
+                        Authenticate as Administrator &rarr;
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 2. Admin Dashboard (Shown when logged in) -->
+        <div id="admin-dashboard-section" style="display: none;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h1 style="font-size: 2rem; margin-bottom: 0.25rem;">Administrator Control Panel</h1>
+                    <p style="color: var(--text-secondary);">Manage Cinema Catalog, Multiple Screens per Theatre, and Schedule Shows in MySQL.</p>
+                </div>
+                <div style="display: flex; gap: 0.75rem;">
+                    <span class="badge badge-ready font-mono">Role: SuperAdmin</span>
+                    <span class="badge font-mono" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);">Engine: MySQL 8.4 InnoDB</span>
+                </div>
+            </div>
+
+            <!-- Two Columns of Controls -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2.5rem;">
+                
+                <!-- Card A: Add New Movie (No Rating field, Clean Save Movie Button) -->
+                <div class="glass-panel" style="padding: 1.75rem;">
+                    <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.25rem;">
+                        <span style="font-size: 1.4rem;">🎬</span>
+                        <h2 style="font-size: 1.2rem; font-weight: 700;">Add New Movie</h2>
+                    </div>
+
+                    <form id="form-add-movie" autocomplete="off">
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: block;">Movie Title *</label>
+                            <input type="text" id="movie-title-input" class="form-control" placeholder="e.g. Avatar: The Way of Water" required style="width: 100%;">
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                            <div class="form-group">
+                                <label style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: block;">Genre *</label>
+                                <input type="text" id="movie-genre-input" class="form-control" placeholder="e.g. Sci-Fi / Action" required style="width: 100%;">
+                            </div>
+                            <div class="form-group">
+                                <label style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: block;">Duration (Mins) *</label>
+                                <input type="number" id="movie-duration-input" class="form-control" placeholder="e.g. 150" required style="width: 100%;">
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                            <div class="form-group">
+                                <label style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: block;">Languages *</label>
+                                <input type="text" id="movie-lang-input" class="form-control" placeholder="e.g. English, Hindi" required style="width: 100%;">
+                            </div>
+                            <div class="form-group">
+                                <label style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: block;">Certification *</label>
+                                <select id="movie-cert-select" class="form-control" style="width: 100%;">
+                                    <option value="U/A 16+">U/A 16+</option>
+                                    <option value="U/A">U/A</option>
+                                    <option value="A">A (Adults Only)</option>
+                                    <option value="U">U (Universal)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: block;">Poster Image Path or URL *</label>
+                            <input type="text" id="movie-poster-input" class="form-control" placeholder="assets/images/inception.jpg or https://..." required style="width: 100%;">
+                            <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem;">
+                                Quick choices: <code>assets/images/inception.jpg</code>, <code>interstellar.jpg</code>, <code>oppenheimer.jpg</code>, <code>matrix.jpg</code>, <code>dune2.jpg</code>, <code>dark_knight.jpg</code>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: block;">Movie Description</label>
+                            <textarea id="movie-desc-input" class="form-control" rows="2" placeholder="Brief synopsis or description of the film..." style="width: 100%;"></textarea>
+                        </div>
+
+                        <button type="submit" id="btn-save-movie" class="btn btn-primary" style="width: 100%; font-weight: 700;">
+                            Save Movie
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Right Column: Card B1 (Create Screen) and Card B2 (Schedule Show) -->
+                <div style="display: flex; flex-direction: column; gap: 2rem;">
+                    
+                    <!-- Card B1: Create Screen / Auditorium (Multiple Screens per Theatre) -->
+                    <div class="glass-panel" style="padding: 1.75rem;">
+                        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.25rem;">
+                            <span style="font-size: 1.4rem;">🖥️</span>
+                            <h2 style="font-size: 1.2rem; font-weight: 700;">Add Screen / Auditorium</h2>
+                        </div>
+
+                        <form id="form-add-screen" autocomplete="off">
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: block;">Select Theatre *</label>
+                                <select id="screen-theatre-select" class="form-control" style="width: 100%;" required>
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                <div class="form-group">
+                                    <label style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: block;">Screen Name *</label>
+                                    <input type="text" id="screen-name-input" class="form-control" placeholder="e.g. Screen 2, IMAX Laser" required style="width: 100%;">
+                                </div>
+                                <div class="form-group">
+                                    <label style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: block;">Screen Type *</label>
+                                    <select id="screen-type-select" class="form-control" style="width: 100%;">
+                                        <option value="IMAX">IMAX 3D Laser</option>
+                                        <option value="4DX">4DX Motion Dynamic</option>
+                                        <option value="Dolby Atmos">Dolby Atmos Prime</option>
+                                        <option value="2D">Standard 2D</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 1.25rem;">
+                                <label style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: block;">Physical Capacity (Seats)</label>
+                                <input type="number" id="screen-capacity-input" class="form-control" placeholder="24" style="width: 100%;">
+                                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem;">
+                                    Automatically generates Rows A-C (Standard), Rows D-F (Premium), and Row G (VIP).
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-secondary" style="width: 100%; border-color: var(--accent-cyan); color: var(--accent-cyan); font-weight: 700;">
+                                Add Screen
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Card B2: Schedule Show (Real Date and Time Scheduling) -->
+                    <div class="glass-panel" style="padding: 1.75rem;">
+                        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.25rem;">
+                            <span style="font-size: 1.4rem;">📅</span>
+                            <h2 style="font-size: 1.2rem; font-weight: 700;">Schedule Movie Show</h2>
+                        </div>
+
+                        <form id="form-add-show" autocomplete="off">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                <div class="form-group">
+                                    <label style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: block;">Select Movie *</label>
+                                    <select id="show-movie-select" class="form-control" style="width: 100%;" required>
+                                        <!-- Populated dynamically -->
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: block;">Select Theatre *</label>
+                                    <select id="show-theatre-select" class="form-control" style="width: 100%;" required>
+                                        <!-- Populated dynamically -->
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: block;">Auditorium Screen *</label>
+                                <select id="show-screen-select" class="form-control" style="width: 100%;" required>
+                                    <!-- Populated dynamically based on chosen theatre -->
+                                </select>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                                <div class="form-group">
+                                    <label style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: block;">Show Date *</label>
+                                    <input type="date" id="show-date-input" class="form-control" required style="width: 100%;">
+                                </div>
+                                <div class="form-group">
+                                    <label style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: block;">Show Time *</label>
+                                    <input type="time" id="show-time-input" class="form-control" placeholder="18:00" required style="width: 100%;">
+                                </div>
+                                <div class="form-group">
+                                    <label style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: block;">Base Price (₹) *</label>
+                                    <input type="number" id="show-price-input" class="form-control" placeholder="350" required style="width: 100%;">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-secondary" style="width: 100%; border-color: var(--accent-emerald); color: var(--accent-emerald); font-weight: 700;">
+                                Add Show
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Card D: Ticket QR Reference Verifier -->
+            <div class="glass-panel" style="padding: 1.75rem; margin-bottom: 2.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1rem;">
+                    <span style="font-size: 1.4rem;">🔍</span>
+                    <h2 style="font-size: 1.2rem; font-weight: 700;">Ticket QR Reference Verifier</h2>
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">
+                    Scan or enter a customer's ticket reference (e.g. <code>BK-772910</code>) to verify authenticity and admission status.
+                </p>
+                <div style="display: flex; gap: 1rem; max-width: 600px;">
+                    <input type="text" id="verify-ticket-ref" class="form-control" placeholder="Enter Booking Reference (e.g. BK-123456)" style="flex: 1;">
+                    <button id="btn-verify-ticket" class="btn btn-primary btn-sm" style="font-weight: 700;">Verify Ticket</button>
+                </div>
+                <div id="verify-ticket-result" style="margin-top: 1rem; font-size: 0.85rem; font-family: var(--font-mono); display: none;"></div>
+            </div>
+
+            <!-- Card C: Live MySQL Bookings Management Table -->
+            <div class="glass-panel" style="padding: 1.75rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h2 style="font-size: 1.2rem; font-weight: 700;">Live MySQL Bookings Registry</h2>
+                        <p style="color: var(--text-muted); font-size: 0.85rem;">All active bookings stored in <code>synccore_db.bookings</code> table.</p>
+                    </div>
+                    <button id="btn-refresh-bookings" class="btn btn-secondary btn-sm">🔄 Refresh Data</button>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Reference</th>
+                                <th>Customer</th>
+                                <th>Movie</th>
+                                <th>Theatre & Screen</th>
+                                <th>Date & Time</th>
+                                <th>Seats</th>
+                                <th>Total</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-bookings-table-body">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <div id="toast-container"></div>
+    <script src="../js/components/toast.js"></script>
+    <script src="../js/components/modal.js"></script>
+    <script src="../js/api.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const loginSection = document.getElementById('admin-login-section');
+            const dashboardSection = document.getElementById('admin-dashboard-section');
+            const logoutBtn = document.getElementById('btn-admin-logout');
+
+            let allTheatres = [];
+            let allScreens = [];
+            let allMovies = [];
+
+            // 1. Check Auth state
+            function checkAuth() {
+                const token = SyncCoreAPI.getToken();
+                const user = SyncCoreAPI.getUser();
+                if (token && (token.includes('ADMIN') || (user && user.role === 'ADMIN'))) {
+                    loginSection.style.display = 'none';
+                    dashboardSection.style.display = 'block';
+                    logoutBtn.style.display = 'inline-block';
+                    loadAdminData();
+                } else {
+                    loginSection.style.display = 'block';
+                    dashboardSection.style.display = 'none';
+                    logoutBtn.style.display = 'none';
+                }
+            }
+
+            // 2. Handle Login
+            document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const user = document.getElementById('admin-user-input').value.trim();
+                const pass = document.getElementById('admin-pass-input').value;
+
+                if (!user || !pass) {
+                    Toast.error('Please enter admin credentials.');
+                    return;
+                }
+
+                const res = await window.API.adminLogin(user, pass);
+                if (res.success) {
+                    SyncCoreAPI.setToken(res.token || 'ADMIN_AUTH_TOKEN');
+                    SyncCoreAPI.setUser({ id: 1, name: 'System Administrator', email: 'admin@synccore.com', role: 'ADMIN' });
+                    Toast.success('Admin authorization granted!');
+                    checkAuth();
+                } else {
+                    Toast.error(res.message || 'Access Denied: Invalid credentials');
+                }
+            });
+
+            // 3. Handle Logout
+            logoutBtn.addEventListener('click', () => {
+                SyncCoreAPI.setToken(null);
+                SyncCoreAPI.setUser(null);
+                Toast.info('Logged out from Admin portal');
+                checkAuth();
+            });
+
+            // 4. Load Admin Dropdowns & Bookings
+            async function loadAdminData() {
+                try {
+                    allTheatres = await window.API.getTheatres();
+                    allScreens = await window.API.getScreens();
+                    allMovies = await window.API.getMovies();
+
+                    populateTheatreDropdowns();
+                    populateMovieDropdowns();
+                    loadAdminBookings();
+                } catch (e) {
+                    console.error('Error loading admin data:', e);
+                }
+            }
+
+            function populateTheatreDropdowns() {
+                const screenTheatreSel = document.getElementById('screen-theatre-select');
+                const showTheatreSel = document.getElementById('show-theatre-select');
+                if (!screenTheatreSel || !showTheatreSel) return;
+
+                screenTheatreSel.innerHTML = '';
+                showTheatreSel.innerHTML = '';
+
+                allTheatres.forEach(t => {
+                    const opt1 = document.createElement('option');
+                    opt1.value = t.theatreId;
+                    opt1.textContent = `${t.name} (${t.city})`;
+                    screenTheatreSel.appendChild(opt1);
+
+                    const opt2 = document.createElement('option');
+                    opt2.value = t.theatreId;
+                    opt2.textContent = `${t.name} (${t.city})`;
+                    showTheatreSel.appendChild(opt2);
+                });
+
+                updateShowScreenDropdown();
+            }
+
+            function populateMovieDropdowns() {
+                const sel = document.getElementById('show-movie-select');
+                if (!sel) return;
+                sel.innerHTML = '';
+                allMovies.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m.id;
+                    opt.textContent = m.title;
+                    sel.appendChild(opt);
+                });
+            }
+
+            const showTheatreSelect = document.getElementById('show-theatre-select');
+            if (showTheatreSelect) {
+                showTheatreSelect.addEventListener('change', updateShowScreenDropdown);
+            }
+
+            async function updateShowScreenDropdown() {
+                const showScreenSel = document.getElementById('show-screen-select');
+                if (!showScreenSel) return;
+                showScreenSel.innerHTML = '';
+
+                const selectedTheatreId = parseInt(showTheatreSelect.value || '1');
+                const screens = await window.API.getScreens(selectedTheatreId);
+
+                if (!screens || screens.length === 0) {
+                    showScreenSel.innerHTML = '<option value="">No screens in this theatre</option>';
+                    return;
+                }
+
+                screens.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.screenId;
+                    opt.textContent = `${s.screenName} (${s.screenType || '2D'}) - ${s.capacity} seats`;
+                    showScreenSel.appendChild(opt);
+                });
+            }
+
+            // Set default date for show scheduling to today
+            const showDateInput = document.getElementById('show-date-input');
+            if (showDateInput) {
+                const today = new Date().toISOString().split('T')[0];
+                showDateInput.min = today;
+                showDateInput.value = today;
+            }
+
+            // 5. Add Movie Form Submission (No Rating!)
+            document.getElementById('form-add-movie').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const title = document.getElementById('movie-title-input').value.trim();
+                const genre = document.getElementById('movie-genre-input').value.trim();
+                const duration = parseInt(document.getElementById('movie-duration-input').value);
+                const language = document.getElementById('movie-lang-input').value.trim();
+                const certificate = document.getElementById('movie-cert-select').value;
+                const poster = document.getElementById('movie-poster-input').value.trim();
+                const desc = document.getElementById('movie-desc-input').value.trim();
+
+                if (!title || !genre || !duration || !poster) {
+                    Toast.error('Please fill in all required movie fields.');
+                    return;
+                }
+
+                const res = await window.API.adminAddMovie({
+                    title, genre, duration, language, certificate, poster, description: desc
+                });
+
+                if (res.success) {
+                    Toast.success(`Movie "${title}" saved to MySQL catalog successfully!`);
+                    document.getElementById('form-add-movie').reset();
+                    loadAdminData();
+                } else {
+                    Toast.error(res.message || 'Failed to save movie');
+                }
+            });
+
+            // 6. Add Screen Form Submission
+            document.getElementById('form-add-screen').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const theatreId = parseInt(document.getElementById('screen-theatre-select').value);
+                const screenName = document.getElementById('screen-name-input').value.trim();
+                const screenType = document.getElementById('screen-type-select').value;
+                const capacity = parseInt(document.getElementById('screen-capacity-input').value) || 24;
+
+                if (!theatreId || !screenName) {
+                    Toast.error('Please enter screen details.');
+                    return;
+                }
+
+                const res = await window.API.adminAddScreen({ theatreId, screenName, screenType, capacity });
+                if (res.success) {
+                    Toast.success(`Screen "${screenName}" created in theatre with 24 physical seats!`);
+                    document.getElementById('screen-name-input').value = '';
+                    updateShowScreenDropdown();
+                } else {
+                    Toast.error(res.message || 'Failed to add screen');
+                }
+            });
+
+            // 7. Add Show Scheduling Submission
+            document.getElementById('form-add-show').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const movieId = parseInt(document.getElementById('show-movie-select').value);
+                const screenId = parseInt(document.getElementById('show-screen-select').value);
+                const showDate = document.getElementById('show-date-input').value;
+                const showTime = document.getElementById('show-time-input').value;
+                const basePrice = parseFloat(document.getElementById('show-price-input').value) || 350;
+
+                if (!movieId || !screenId || !showDate || !showTime) {
+                    Toast.error('Please specify complete show schedule parameters.');
+                    return;
+                }
+
+                const res = await window.API.adminAddShow({ movieId, screenId, showDate, showTime, basePrice });
+                if (res.success) {
+                    Toast.success('Show scheduled and seats initialized in database!');
+                } else {
+                    Toast.error(res.message || 'Failed to schedule show');
+                }
+            });
+
+            // 8. Verify Ticket QR Reference
+            document.getElementById('btn-verify-ticket').addEventListener('click', async () => {
+                const ref = document.getElementById('verify-ticket-ref').value.trim();
+                const outEl = document.getElementById('verify-ticket-result');
+                if (!ref) {
+                    Toast.error('Please enter a ticket reference.');
+                    return;
+                }
+
+                const res = await window.API.adminVerifyTicket(ref);
+                outEl.style.display = 'block';
+                if (res.valid) {
+                    outEl.innerHTML = `<span style="color:var(--accent-emerald); font-weight:700;">✓ ${res.details}</span>`;
+                    Toast.success('Valid Confirmed Ticket!');
+                } else {
+                    outEl.innerHTML = `<span style="color:var(--accent-rose); font-weight:700;">✕ ${res.details}</span>`;
+                    Toast.error('Invalid or Cancelled Ticket');
+                }
+            });
+
+            // 9. Load Bookings Table
+            async function loadAdminBookings() {
+                const tbody = document.getElementById('admin-bookings-table-body');
+                if (!tbody) return;
+
+                tbody.innerHTML = '<tr><td colspan="11" style="text-align:center; color:var(--text-muted); padding:1.5rem;">Fetching live MySQL records...</td></tr>';
+                const list = await window.API.getBookings();
+                tbody.innerHTML = '';
+
+                if (!list || list.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center; color:var(--text-muted); padding:1.5rem;">No bookings found in database.</td></tr>';
+                    return;
+                }
+
+                list.forEach(b => {
+                    const tr = document.createElement('tr');
+                    const sched = (b.movieDate && b.movieTime) ? `${b.movieDate} ${b.movieTime}` : (b.showTime || '2026-10-15 18:00');
+                    tr.innerHTML = `
+                        <td class="font-mono">${b.bookingId || 1}</td>
+                        <td class="font-mono" style="font-weight:700; color:var(--accent-cyan);">${b.bookingReference}</td>
+                        <td style="font-weight:600; color:#fff;">${b.customerName || 'Guest User'}</td>
+                        <td>${b.movieTitle || 'SyncCore Cinema'}</td>
+                        <td style="font-size:0.8rem; color:var(--text-secondary);">${b.theatreName || 'IMAX Cyberplex'} &bull; ${b.screenName || 'Screen 1'}</td>
+                        <td class="font-mono" style="font-size:0.8rem; color:var(--text-secondary);">${sched}</td>
+                        <td class="font-mono">${b.seats || b.totalSeats}</td>
+                        <td class="font-mono">₹${parseFloat(b.totalAmount || 350).toFixed(2)}</td>
+                        <td><span class="badge ${b.paymentStatus === 'SUCCESS' ? 'badge-running' : 'badge-waiting'}">${b.paymentStatus || 'SUCCESS'}</span></td>
+                        <td><span class="badge ${b.status === 'CONFIRMED' ? 'badge-running' : (b.status === 'CANCELLED' ? 'badge-terminated' : 'badge-waiting')}">${b.status}</span></td>
+                        <td>
+                            <button class="btn btn-danger btn-sm btn-delete-row" data-id="${b.bookingId || 1}" style="padding:0.2rem 0.5rem; font-size:0.75rem;">
+                                🗑️ Delete
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.querySelectorAll('.btn-delete-row').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const bId = btn.dataset.id;
+                        if (!confirm(`Delete booking ID #${bId} from MySQL?`)) return;
+                        await window.API.adminDeleteBooking(bId);
+                        Toast.success(`Booking #${bId} deleted from database.`);
+                        loadAdminBookings();
+                    });
+                });
+            }
+
+            document.getElementById('btn-refresh-bookings').addEventListener('click', loadAdminBookings);
+
+            checkAuth();
+        });
+    </script>
+</body>
+</html>

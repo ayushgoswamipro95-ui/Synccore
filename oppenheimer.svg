@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="fire" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#450a0a"/>
+      <stop offset="40%" stop-color="#7f1d1d"/>
+      <stop offset="70%" stop-color="#b91c1c"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <radialGradient id="blast" cx="50%" cy="35%" r="45%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="25%" stop-color="#f97316"/>
+      <stop offset="60%" stop-color="#dc2626"/>
+      <stop offset="100%" stop-color="#450a0a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="600" fill="url(#fire)"/>
+
+  <!-- Atomic Blast Shockwave Sphere -->
+  <circle cx="200" cy="210" r="130" fill="url(#blast)"/>
+  <circle cx="200" cy="210" r="132" fill="none" stroke="#fef08a" stroke-width="2" opacity="0.6"/>
+  <circle cx="200" cy="210" r="160" fill="none" stroke="#f97316" stroke-width="1.5" stroke-dasharray="8" opacity="0.4"/>
+  <circle cx="200" cy="210" r="190" fill="none" stroke="#ea580c" stroke-width="1" stroke-dasharray="12" opacity="0.3"/>
+
+  <!-- Movie Title Card -->
+  <rect x="20" y="440" width="360" height="135" rx="10" fill="rgba(11,15,25,0.85)" stroke="rgba(255,255,255,0.1)"/>
+  <text x="35" y="475" fill="#f97316" font-family="Inter, sans-serif" font-size="12" font-weight="700" letter-spacing="2">THE WORLD FOREVER CHANGES</text>
+  <text x="35" y="510" fill="#ffffff" font-family="Inter, sans-serif" font-size="24" font-weight="900" letter-spacing="1">OPPENHEIMER</text>
+  <text x="35" y="535" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13">Biography / Drama &bull; 3h 00m &bull; IMAX 70mm</text>
+  <text x="35" y="558" fill="#f59e0b" font-family="Inter, sans-serif" font-size="13" font-weight="700">★ 8.9/10 (950K Votes)</text>
+</svg>

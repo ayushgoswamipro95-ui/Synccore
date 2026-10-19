@@ -1,0 +1,28 @@
+/* Responsive Layout Breakpoints */
+@media (max-width: 1024px) {
+    .sim-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar .nav-links {
+        display: none;
+    }
+    
+    .metrics-row {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .seat {
+        width: 30px;
+        height: 30px;
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .metrics-row {
+        grid-template-columns: 1fr;
+    }
+}

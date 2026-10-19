@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SyncCore — Booking Confirmation</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/ticket.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container nav-content">
+            <a href="../index.html" class="brand-logo">
+                <span class="brand-dot"></span>
+                <span>SyncCore Cinema</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="../index.html" class="nav-link">Home</a></li>
+                <li><a href="my-bookings.html" class="nav-link">My Bookings</a></li>
+                <li><a href="admin.html" class="nav-link" style="color: var(--accent-rose); font-weight: 600;">🛡️ Admin</a></li>
+            </ul>
+            <div id="nav-auth-container" style="display: flex; align-items: center; gap: 1rem;">
+                <a href="simulation.html" class="btn btn-secondary btn-sm" style="border-color: var(--accent-cyan); color: var(--accent-cyan); font-weight:700;">
+                    ⚡ OS Simulator
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="padding-top: 3.5rem; padding-bottom: 5rem; max-width: 680px; text-align: center;">
+        <div class="glass-panel" style="padding: 2.5rem 2rem;">
+            <div style="width: 70px; height: 70px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); border: 2px solid rgba(16, 185, 129, 0.4); color: var(--accent-emerald); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 1.25rem auto;">
+                ✓
+            </div>
+            <h1 style="font-size: 2rem; margin-bottom: 0.5rem; font-weight: 800;">Booking Confirmed!</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.95rem;">
+                Payment verified and transaction committed under strict ACID serializability.
+            </p>
+
+            <div style="background: rgba(0,0,0,0.3); border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.06); padding: 1.5rem; text-align: left; margin-bottom: 2rem; display: flex; flex-direction: column; gap: 0.85rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--text-muted); font-size: 0.9rem;">Booking Reference:</span>
+                    <span class="font-mono" style="font-weight:800; color:var(--accent-cyan); font-size: 1.1rem;" id="conf-ref">BK-772910</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--text-muted); font-size: 0.9rem;">Customer:</span>
+                    <span style="font-weight:600; color:#fff;" id="conf-customer">Customer</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--text-muted); font-size: 0.9rem;">Movie:</span>
+                    <span style="color:#fff; font-weight: 600;" id="conf-movie">Interstellar</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--text-muted); font-size: 0.9rem;">Theatre & Screen:</span>
+                    <span style="color:var(--text-secondary);" id="conf-theatre-screen">SyncCore Cinemas &bull; Screen 1</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--text-muted); font-size: 0.9rem;">Show Date & Time:</span>
+                    <span style="color:var(--text-secondary);" id="conf-datetime">Today 18:00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--text-muted); font-size: 0.9rem;">Reserved Seats:</span>
+                    <span class="font-mono" style="color:var(--accent-cyan); font-weight:700;" id="conf-seats">G10</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--text-muted); font-size: 0.9rem;">Total Paid:</span>
+                    <span class="font-mono" style="color:var(--accent-emerald); font-weight:800; font-size: 1.05rem;" id="conf-amount">₹350.00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--text-muted); font-size: 0.9rem;">Razorpay Payment ID:</span>
+                    <span class="font-mono" style="color:var(--text-secondary); font-size:0.85rem;" id="conf-txn">pay_mock_123</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--text-muted); font-size: 0.9rem;">Transaction Status:</span>
+                    <span class="badge badge-running" style="background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald);">ACID COMMITTED</span>
+                </div>
+            </div>
+
+            <!-- Primary Actions -->
+            <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                <button id="btn-download-ticket" class="btn btn-primary" style="width: 100%; font-size: 1rem; padding: 0.85rem; background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
+                    🎟️ Download Ticket (PDF)
+                </button>
+                <div style="display: flex; gap: 1rem;">
+                    <a href="my-bookings.html" class="btn btn-secondary" style="flex: 1;">View My Bookings</a>
+                    <a href="../index.html" class="btn btn-secondary" style="flex: 1;">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Dependencies -->
+    <div id="toast-container"></div>
+    <script src="../js/components/toast.js"></script>
+    <script src="../js/components/modal.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/components/navbar.js"></script>
+    <script src="../js/components/qrcode.min.js"></script>
+    <script src="../js/components/ticket.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let bookingData = null;
+            const raw = sessionStorage.getItem('lastBooking');
+            if (raw) {
+                try {
+                    bookingData = JSON.parse(raw);
+                } catch(e) {}
+            }
+
+            if (bookingData) {
+                const b = bookingData;
+                if (b.bookingReference) document.getElementById('conf-ref').textContent = b.bookingReference;
+                if (b.customerName) document.getElementById('conf-customer').textContent = b.customerName;
+                if (b.movieTitle) document.getElementById('conf-movie').textContent = b.movieTitle;
+                
+                const tName = b.theatreName || 'SyncCore Cinemas';
+                const sName = b.screenName || 'Screen 1 (Laser 4K)';
+                document.getElementById('conf-theatre-screen').innerHTML = `${tName} &bull; ${sName}`;
+
+                const d = b.movieDate || b.showDate || 'Today';
+                const t = b.movieTime || b.showTime || '18:00';
+                document.getElementById('conf-datetime').textContent = `${d} at ${t}`;
+
+                if (b.seats) document.getElementById('conf-seats').textContent = b.seats;
+                if (b.totalAmount) document.getElementById('conf-amount').textContent = `₹${parseFloat(b.totalAmount).toFixed(2)}`;
+                if (b.transactionId) document.getElementById('conf-txn').textContent = b.transactionId;
+            }
+
+            document.getElementById('btn-download-ticket').onclick = () => {
+                if (bookingData && window.openTicket) {
+                    window.openTicket(bookingData);
+                } else if (window.openTicket) {
+                    window.openTicket({
+                        bookingReference: document.getElementById('conf-ref').textContent,
+                        movieTitle: document.getElementById('conf-movie').textContent,
+                        customerName: document.getElementById('conf-customer').textContent,
+                        seats: document.getElementById('conf-seats').textContent,
+                        showDate: document.getElementById('conf-datetime').textContent,
+                        totalAmount: 350
+                    });
+                }
+            };
+        });
+    </script>
+</body>
+</html>
