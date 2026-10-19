@@ -1,0 +1,444 @@
+/* ==========================================================================
+   SyncCore Cinema — E-Ticket Styles & Print Layout
+   ========================================================================== */
+
+/* Ticket Modal Overlay */
+.ticket-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(4, 7, 13, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    overflow-y: auto;
+    animation: ticketFadeIn 0.25s ease-out;
+}
+
+@keyframes ticketFadeIn {
+    from { opacity: 0; transform: scale(0.97); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.ticket-modal-content {
+    max-width: 680px;
+    width: 100%;
+    margin: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* Modal Actions Bar (Top) */
+.ticket-actions-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.ticket-actions-group {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+/* The Ticket Container */
+.cinema-ticket-card {
+    background: linear-gradient(145deg, #101625, #0a0d16);
+    border: 1px solid rgba(0, 229, 255, 0.25);
+    border-radius: 18px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 229, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    color: #e2e8f0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top Glow Line */
+.cinema-ticket-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent-cyan, #00e5ff), var(--accent-emerald, #10b981), var(--accent-cyan, #00e5ff));
+}
+
+/* Ticket Header */
+.ticket-header {
+    padding: 1.25rem 1.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.ticket-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #fff;
+}
+
+.ticket-brand-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #00e5ff;
+    box-shadow: 0 0 10px #00e5ff;
+}
+
+.ticket-badge-official {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.25rem 0.65rem;
+    border-radius: 20px;
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/* Main Body: Movie & Show Info */
+.ticket-body {
+    padding: 1.75rem;
+    display: flex;
+    gap: 1.75rem;
+}
+
+.ticket-poster-wrap {
+    width: 110px;
+    min-width: 110px;
+    height: 155px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #182032;
+}
+
+.ticket-poster-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.ticket-main-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.ticket-movie-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 0.35rem;
+    line-height: 1.25;
+}
+
+.ticket-theatre-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #00e5ff;
+    margin-bottom: 0.2rem;
+}
+
+.ticket-screen-title {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    margin-bottom: 1rem;
+}
+
+.ticket-grid-details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 0.85rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ticket-detail-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.ticket-detail-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #64748b;
+    margin-bottom: 0.2rem;
+    font-weight: 600;
+}
+
+.ticket-detail-val {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #f1f5f9;
+}
+
+/* Seats Highlight Bar */
+.ticket-seats-bar {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(0, 229, 255, 0.08);
+    border: 1px dashed rgba(0, 229, 255, 0.3);
+    padding: 0.65rem 1rem;
+    border-radius: 8px;
+}
+
+.ticket-seat-badges {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.seat-pill {
+    background: #00e5ff;
+    color: #0a0d16;
+    font-family: monospace;
+    font-weight: 800;
+    font-size: 0.85rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+}
+
+/* Ticket Perforation Tear Notch */
+.ticket-perforation {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    margin: 0;
+}
+
+.ticket-cutout-left,
+.ticket-cutout-right {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(4, 7, 13, 1);
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.ticket-cutout-left { left: -12px; }
+.ticket-cutout-right { right: -12px; }
+
+.ticket-dashed-line {
+    width: 100%;
+    border-top: 2px dashed rgba(255, 255, 255, 0.16);
+    margin: 0 1.25rem;
+}
+
+/* Stub Section with QR Code */
+.ticket-stub {
+    padding: 1.25rem 1.75rem 1.5rem 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.ticket-stub-user {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.ticket-qr-container {
+    background: #ffffff;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 130px;
+    min-width: 130px;
+}
+
+.ticket-qr-container canvas,
+.ticket-qr-container img,
+.ticket-qr-container svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.ticket-qr-label {
+    font-family: monospace;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-top: 4px;
+    text-align: center;
+    letter-spacing: 0.05em;
+}
+
+.ticket-footer-legal {
+    font-size: 0.68rem;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+/* ==========================================================================
+   PRINT STYLESHEET — Perfect Clean 1-Page Cinema Ticket PDF
+   ========================================================================== */
+@media print {
+    /* Hide everything on the page except the ticket */
+    body * {
+        visibility: hidden !important;
+    }
+
+    /* Reset background and margins */
+    html, body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    }
+
+    .ticket-modal-overlay {
+        position: static !important;
+        background: transparent !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        display: block !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    .ticket-modal-content {
+        max-width: 100% !important;
+        margin: 0 !important;
+    }
+
+    .ticket-actions-bar {
+        display: none !important;
+    }
+
+    #synccore-ticket-print-target,
+    #synccore-ticket-print-target * {
+        visibility: visible !important;
+    }
+
+    #synccore-ticket-print-target {
+        position: absolute !important;
+        left: 50% !important;
+        top: 2cm !important;
+        transform: translateX(-50%) !important;
+        width: 18cm !important;
+        background: #ffffff !important;
+        color: #0f172a !important;
+        border: 2px solid #0f172a !important;
+        box-shadow: none !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    .cinema-ticket-card::before {
+        background: #0f172a !important;
+        height: 6px !important;
+    }
+
+    .ticket-header {
+        background: #f8fafc !important;
+        border-bottom: 2px dashed #94a3b8 !important;
+    }
+
+    .ticket-brand {
+        color: #0f172a !important;
+    }
+
+    .ticket-brand-dot {
+        background: #0f172a !important;
+        box-shadow: none !important;
+    }
+
+    .ticket-badge-official {
+        background: #e2e8f0 !important;
+        color: #0f172a !important;
+        border: 1px solid #94a3b8 !important;
+    }
+
+    .ticket-movie-title {
+        color: #0f172a !important;
+    }
+
+    .ticket-theatre-title {
+        color: #0f172a !important;
+    }
+
+    .ticket-grid-details {
+        background: #f1f5f9 !important;
+        border: 1px solid #cbd5e1 !important;
+    }
+
+    .ticket-detail-label {
+        color: #64748b !important;
+    }
+
+    .ticket-detail-val {
+        color: #0f172a !important;
+    }
+
+    .ticket-seats-bar {
+        background: #f8fafc !important;
+        border: 1px solid #94a3b8 !important;
+    }
+
+    .seat-pill {
+        background: #0f172a !important;
+        color: #ffffff !important;
+    }
+
+    .ticket-cutout-left,
+    .ticket-cutout-right {
+        display: none !important;
+    }
+
+    .ticket-dashed-line {
+        border-top: 2px dashed #94a3b8 !important;
+    }
+
+    .ticket-stub {
+        background: #f8fafc !important;
+    }
+
+    .ticket-qr-container {
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: none !important;
+    }
+}
