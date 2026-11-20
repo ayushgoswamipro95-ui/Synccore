@@ -1,0 +1,31 @@
+#pragma once
+#include <string>
+#include <vector>
+#include <map>
+#include "SyncMutex.h"
+#include "../models/ResourceLock.h"
+
+namespace synccore {
+namespace concurrency {
+
+class LockManager {
+public:
+    static LockManager& getInstance() {
+        static LockManager instance;
+        return instance;
+    }
+
+    bool requestLock(const std::string& resourceId, int processId);
+    bool releaseLock(const std::string& resourceId, int processId);
+    models::LockState getLockState(const std::string& resourceId) const;
+    std::vector<models::ResourceLock> getAllLocks() const;
+    void reset();
+
+private:
+    LockManager() = default;
+    mutable SyncMutex mutex_;
+    std::map<std::string, models::ResourceLock> locks_;
+};
+
+} // namespace concurrency
+} // namespace synccore

@@ -1,0 +1,58 @@
+#pragma once
+
+#ifdef _WIN32
+#include <windows.h>
+
+namespace synccore {
+namespace concurrency {
+
+class SyncMutex {
+public:
+    SyncMutex() {
+        InitializeCriticalSection(&cs_);
+    }
+
+    ~SyncMutex() {
+        DeleteCriticalSection(&cs_);
+    }
+
+    void lock() {
+        EnterCriticalSection(&cs_);
+    }
+
+    bool try_lock() {
+        return TryEnterCriticalSection(&cs_) != 0;
+    }
+
+    void unlock() {
+        LeaveCriticalSection(&cs_);
+    }
+
+    SyncMutex(const SyncMutex&) = delete;
+    SyncMutex& operator=(const SyncMutex&) = delete;
+
+private:
+    CRITICAL_SECTION cs_;
+};
+
+class SyncLockGuard {
+public:
+    explicit SyncLockGuard(SyncMutex& m) : mutex_(m) {
+        mutex_.lock();
+    }
+
+    ~SyncLockGuard() {
+        mutex_.unlock();
+    }
+
+    SyncLockGuard(const SyncLockGuard&) = delete;
+    SyncLockGuard& operator=(const SyncLockGuard&) = delete;
+
+private:
+    SyncMutex& mutex_;
+};
+
+} // namespace concurrency
+} // namespace synccore
+
+#endif
