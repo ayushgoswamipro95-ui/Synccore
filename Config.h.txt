@@ -1,0 +1,121 @@
+#pragma once
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <cstdlib>
+#include <iostream>
+
+namespace synccore {
+namespace config {
+
+struct DatabaseConfig {
+    std::string host = "127.0.0.1";
+    int port = 3306;
+    std::string user = "root";
+    std::string password = "Ayush@123";
+    std::string schema = "synccore_db";
+    int poolSize = 5;
+};
+
+struct ServerConfig {
+    int port = 8080;
+    std::string host = "0.0.0.0";
+    std::string staticDir = "../frontend";
+};
+
+struct RazorpayConfig {
+    std::string keyId = "rzp_test_synccore_demo";
+    std::string keySecret = "secret_synccore_test_key";
+    std::string webhookSecret = "webhook_synccore_secret";
+};
+
+class Config {
+public:
+    static Config& getInstance() {
+        static Config instance;
+        return instance;
+    }
+
+    const DatabaseConfig& getDbConfig() const { return dbConfig_; }
+    const ServerConfig& getServerConfig() const { return serverConfig_; }
+    const RazorpayConfig& getRazorpayConfig() const { return razorpayConfig_; }
+
+    void setDbCredentials(const std::string& user, const std::string& pwd) {
+        dbConfig_.user = user;
+        dbConfig_.password = pwd;
+    }
+
+    void setRazorpayCredentials(const std::string& keyId, const std::string& keySecret, const std::string& webhookSecret) {
+        razorpayConfig_.keyId = keyId;
+        razorpayConfig_.keySecret = keySecret;
+        razorpayConfig_.webhookSecret = webhookSecret;
+    }
+
+private:
+    Config() {
+        loadEnvFile();
+        loadEnvVars();
+    }
+
+    void loadEnvFile() {
+        std::string paths[] = {".env", "../.env", "scripts/.env"};
+        for (const auto& path : paths) {
+            std::ifstream file(path);
+            if (file.is_open()) {
+                std::string line;
+                while (std::getline(file, line)) {
+                    if (line.empty() || line[0] == '#') continue;
+                    size_t eqPos = line.find('=');
+                    if (eqPos != std::string::npos) {
+                        std::string key = line.substr(0, eqPos);
+                        std::string val = line.substr(eqPos + 1);
+                        // Trim whitespace and quotes
+                        size_t first = key.find_first_not_of(" \t\r\n");
+                        size_t last = key.find_last_not_of(" \t\r\n");
+                        if (first != std::string::npos && last != std::string::npos) {
+                            key = key.substr(first, last - first + 1);
+                        }
+                        first = val.find_first_not_of(" \t\r\n\"'");
+                        last = val.find_last_not_of(" \t\r\n\"'");
+                        if (first != std::string::npos && last != std::string::npos) {
+                            val = val.substr(first, last - first + 1);
+                        }
+                        applyConfig(key, val);
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    void loadEnvVars() {
+        const char* keyId = std::getenv("RAZORPAY_KEY_ID");
+        if (keyId && *keyId) razorpayConfig_.keyId = keyId;
+
+        const char* keySecret = std::getenv("RAZORPAY_KEY_SECRET");
+        if (keySecret && *keySecret) razorpayConfig_.keySecret = keySecret;
+
+        const char* webhookSecret = std::getenv("RAZORPAY_WEBHOOK_SECRET");
+        if (webhookSecret && *webhookSecret) razorpayConfig_.webhookSecret = webhookSecret;
+
+        const char* dbPass = std::getenv("MYSQL_PASSWORD");
+        if (dbPass && *dbPass) dbConfig_.password = dbPass;
+    }
+
+    void applyConfig(const std::string& key, const std::string& val) {
+        if (key == "RAZORPAY_KEY_ID") razorpayConfig_.keyId = val;
+        else if (key == "RAZORPAY_KEY_SECRET") razorpayConfig_.keySecret = val;
+        else if (key == "RAZORPAY_WEBHOOK_SECRET") razorpayConfig_.webhookSecret = val;
+        else if (key == "MYSQL_PASSWORD") dbConfig_.password = val;
+        else if (key == "MYSQL_USER") dbConfig_.user = val;
+        else if (key == "MYSQL_DATABASE") dbConfig_.schema = val;
+        else if (key == "SERVER_PORT") serverConfig_.port = std::atoi(val.c_str());
+    }
+
+    DatabaseConfig dbConfig_;
+    ServerConfig serverConfig_;
+    RazorpayConfig razorpayConfig_;
+};
+
+} // namespace config
+} // namespace synccore
