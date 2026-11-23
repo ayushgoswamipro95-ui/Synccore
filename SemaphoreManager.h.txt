@@ -1,0 +1,80 @@
+#pragma once
+#include <string>
+#include <map>
+#include <memory>
+#include "SyncMutex.h"
+
+namespace synccore {
+namespace concurrency {
+
+class CountingSemaphore {
+public:
+    explicit CountingSemaphore(int initialCount = 1, int maxCount = 10)
+        : count_(initialCount), maxCount_(maxCount) {
+#ifdef _WIN32
+        semHandle_ = CreateSemaphoreA(NULL, initialCount, maxCount, NULL);
+#endif
+    }
+
+    ~CountingSemaphore() {
+#ifdef _WIN32
+        if (semHandle_) CloseHandle(semHandle_);
+#endif
+    }
+
+    bool wait(int timeoutMs = 1000) {
+#ifdef _WIN32
+        DWORD waitRes = WaitForSingleObject(semHandle_, timeoutMs);
+        if (waitRes == WAIT_OBJECT_0) {
+            SyncLockGuard lock(mutex_);
+            --count_;
+            return true;
+        }
+        return false;
+#else
+        return true;
+#endif
+    }
+
+    void signal() {
+#ifdef _WIN32
+        SyncLockGuard lock(mutex_);
+        if (count_ < maxCount_) {
+            ++count_;
+            ReleaseSemaphore(semHandle_, 1, NULL);
+        }
+#endif
+    }
+
+    int getAvailablePermits() const { return count_; }
+
+private:
+    mutable SyncMutex mutex_;
+    int count_;
+    int maxCount_;
+#ifdef _WIN32
+    HANDLE semHandle_;
+#endif
+};
+
+class SemaphoreManager {
+public:
+    static SemaphoreManager& getInstance() {
+        static SemaphoreManager instance;
+        return instance;
+    }
+
+    void registerSemaphore(const std::string& name, int initialCount);
+    bool acquire(const std::string& name, int timeoutMs = 1000);
+    void release(const std::string& name);
+    int getPermits(const std::string& name);
+    void reset();
+
+private:
+    SemaphoreManager() = default;
+    mutable SyncMutex mutex_;
+    std::map<std::string, std::shared_ptr<CountingSemaphore>> semaphores_;
+};
+
+} // namespace concurrency
+} // namespace synccore
