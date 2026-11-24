@@ -1,0 +1,30 @@
+#pragma once
+#include <string>
+#include <map>
+#include "SyncMutex.h"
+
+namespace synccore {
+namespace concurrency {
+
+class MutexManager {
+public:
+    static MutexManager& getInstance() {
+        static MutexManager instance;
+        return instance;
+    }
+
+    bool lock(const std::string& resourceId, int processId);
+    bool tryLock(const std::string& resourceId, int processId);
+    bool unlock(const std::string& resourceId, int processId);
+    bool isLocked(const std::string& resourceId) const;
+    int getHolder(const std::string& resourceId) const;
+    void reset();
+
+private:
+    MutexManager() = default;
+    mutable SyncMutex globalMutex_;
+    std::map<std::string, int> locks_; // resourceId -> processId
+};
+
+} // namespace concurrency
+} // namespace synccore
