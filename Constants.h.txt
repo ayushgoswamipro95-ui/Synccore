@@ -1,0 +1,35 @@
+#pragma once
+#include <string>
+
+namespace synccore {
+namespace config {
+
+namespace Constants {
+    const std::string APP_NAME = "SyncCore";
+    const std::string APP_VERSION = "1.0.0";
+
+    // Seat Statuses
+    const std::string SEAT_AVAILABLE = "AVAILABLE";
+    const std::string SEAT_LOCKED = "LOCKED";
+    const std::string SEAT_BOOKED = "BOOKED";
+
+    // Booking Statuses
+    const std::string BOOKING_PENDING = "PENDING";
+    const std::string BOOKING_CONFIRMED = "CONFIRMED";
+    const std::string BOOKING_CANCELLED = "CANCELLED";
+    const std::string BOOKING_FAILED = "FAILED";
+
+    // Process States
+    const std::string PROCESS_READY = "READY";
+    const std::string PROCESS_RUNNING = "RUNNING";
+    const std::string PROCESS_WAITING = "WAITING";
+    const std::string PROCESS_TERMINATED = "TERMINATED";
+
+    // Schedulers
+    const std::string SCHEDULER_FCFS = "FCFS";
+    const std::string SCHEDULER_SJF = "SJF";
+    const std::string SCHEDULER_PRIORITY = "PRIORITY";
+}
+
+} // namespace config
+} // namespace synccore
