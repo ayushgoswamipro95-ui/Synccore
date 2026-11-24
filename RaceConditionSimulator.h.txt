@@ -1,0 +1,25 @@
+#pragma once
+#include <string>
+#include <vector>
+
+namespace synccore {
+namespace concurrency {
+
+struct RaceConditionResult {
+    bool synchronized;
+    std::string seatLabel;
+    int process1Id;
+    int process2Id;
+    bool process1Success;
+    bool process2Success;
+    std::string outcomeDescription;
+    std::vector<std::string> executionTrace;
+};
+
+class RaceConditionSimulator {
+public:
+    RaceConditionResult runDemo(bool enableSynchronization, const std::string& seatLabel = "G10");
+};
+
+} // namespace concurrency
+} // namespace synccore
