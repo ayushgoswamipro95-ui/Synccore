@@ -1,0 +1,28 @@
+#pragma once
+#include <string>
+#include <functional>
+#include "MutexManager.h"
+
+namespace synccore {
+namespace concurrency {
+
+class CriticalSectionGuard {
+public:
+    CriticalSectionGuard(const std::string& resourceId, int processId);
+    ~CriticalSectionGuard();
+
+    bool isAcquired() const { return acquired_; }
+
+private:
+    std::string resourceId_;
+    int processId_;
+    bool acquired_;
+};
+
+class CriticalSection {
+public:
+    static bool executeGuarded(const std::string& resourceId, int processId, const std::function<bool()>& action);
+};
+
+} // namespace concurrency
+} // namespace synccore
